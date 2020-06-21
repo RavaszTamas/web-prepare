@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="66633519-5a46-4dff-858e-e25604e33d79" name="Upload to apache server" url="http://localhost/php_tempalte">
+        <fileTransfer mountedRoot="C:\xampp\htdocs\php_template" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>

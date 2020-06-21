@@ -1,0 +1,145 @@
+﻿@using asp_template.Models;
+@{
+    ViewBag.Title = "ViewAsset";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Login form</title>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/bootstrap.min.css" type="text/css" rel="stylesheet" />
+
+</head>
+<body>
+    @{
+        User user = (User)Session["user"];
+        if (user == null)
+        {
+            Response.Redirect("/Login");
+        }
+        else
+        {
+            <header>
+                <form action="/Login/Logout" class="nav container">
+                    <button type="submit" class="btn btn-primary">Log out</button>
+                </form>
+            </header>
+            <main class="container">
+                <h1>Welcome @user.username</h1>
+                <section id="new-assets">
+                    
+                </section>
+                <section id="new-asset-form">
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <input type="text" id="description" name="description" />
+                        </div>
+                        <div class="form-group">
+                            <label for="value">Value:</label>
+                            <input type="number" id="value" name="value" />
+                        </div>
+                        <button type="button" id="add-asset-btn" class="btn btn-primary">Add asset</button>
+                        <button type="button" id="save-assets-btn" class="btn btn-primary">Submit assets</button>
+                    </form>
+                </section>
+
+                <table class="table">
+                    <thead>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Value</th></thead>
+                    <tbody id="main-table-body"></tbody>
+                </table>
+            </main>
+        }
+    }
+</body>
+
+<script>
+        function isEmpty(stringtocheck) {
+            return (stringtocheck.length === 0 || !stringtocheck.trim());
+        };
+
+        function populateTable(assets) {
+            console.log("populate table");
+            console.log(assets);
+            
+            let tableBody = "";
+            $("#main-table-body").html("");
+            for(let asset of assets) {
+                let row = "<tr>";
+                if (asset.value > 10) {
+                    row = "<tr style=\"background-color:#FF0000\">";
+                }
+                row += "<td>" + asset.name + "</td>"+
+                    "<td>" + asset.description + "</td>"+
+                    "<td>" + asset.value + "</td></tr>";
+                tableBody += row;
+                console.log(row)
+            }
+            $("#main-table-body").html(tableBody);
+
+        }
+        $(document).ready(function () {
+            let assetArray = []
+            $.getJSON(
+                "/Asset/GetUserAssets",{userId: @user.id}, function(data,status){
+                    console.log("data",data);
+                    let assets = data["assets"];
+                    populateTable(assets);
+                }
+            );
+
+            $("#save-assets-btn").click(function(){
+                console.log('adding assets',assetArray);
+                $.post(
+                    'Asset/AddAssets',{assets:JSON.stringify(assetArray)},function(data,status){
+                        location.reload();
+                    }
+
+                    );
+
+                assetArray = [];
+            })
+
+            $("#add-asset-btn").click(function () {
+                    if (
+                        isEmpty($("#name").val()) ||
+                        isEmpty($("#description").val()) ||
+                        isEmpty($("#value").val())
+                    ) {
+                        return;
+                    }
+                    assetArray.push(
+                        {
+                    user_id: @user.id,
+                    name: $("#name").val(),
+                    description: $("#description").val(),
+                    value: parseInt($("#value").val())
+                        }
+                    )
+
+                    $("#name").val("");
+                    $("#description").val("");
+                    $("#value").val("");
+
+                    let content = "<h4>Assets to add:<br>";
+                    for (let tempAsset of assetArray) {
+                        content += "<b>" + tempAsset["name"] + ",</b> "
+                    }
+                    content += "</h4>";
+                    $("#new-assets").html(content);
+
+                }
+            );
+        });
+</script>
+
+</html>

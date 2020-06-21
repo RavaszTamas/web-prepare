@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewBag.Title = "ViewLogin";
+    Layout = null;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Login form</title>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/bootstrap.min.css" type="text/css"  rel="stylesheet" />
+    <script>
+        $(document).ready(function () {
+        });
+    </script>
+</head>
+<body>
+    <main>
+        <div class="container">
+            <form action="/Login/Login" method="post">
+                <div class="form-group">
+                    <label> Username:</label>
+                    <input type="text" id="username" name="username" />
+                 </div>
+                <div class="form-group">
+                    <label> Password:</label>
+                    <input type="password" id="password" name="password" />
+                </div>
+                <button type="submit" id="login-button">Log in</button>
+            </form>
+            <div>
+                <span class="btn-danger">@ViewBag.errorMessage</span>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+
